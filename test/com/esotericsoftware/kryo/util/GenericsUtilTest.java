@@ -107,7 +107,6 @@ public class GenericsUtilTest {
 			assertTrue(value1 + " != " + value2, value1.equalsIgnoreCase(value2));
 		}
 	}
-
 	static public class Test1<FLOAT, STRING, NULL> {
 		public ArrayList<String> fromField1;
 		public ArrayList<FLOAT> fromSubClass;
