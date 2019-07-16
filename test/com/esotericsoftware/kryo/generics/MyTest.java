@@ -25,7 +25,7 @@ public class MyTest {
 
     // https://github.com/EsotericSoftware/kryo/issues/654
     @Test
-    public void serialize() {
+    public void test_Serialize() {
         Kryo kryo = kryos.get();
 
         final Output output = new Output(1024);
@@ -39,6 +39,55 @@ public class MyTest {
         Assert.assertNotNull(container);
     }
 
+    @Test
+    public void test_MyMap() {
+        MyMap<Integer, String, String> myMap = new MyMap<>(new MyEntry<>(1, "ai"), "haha");
+        Kryo kryo = kryos.get();
+        final Output output = new Output(1024);
+        kryo.writeClassAndObject(output, myMap);
+        final byte[] result = output.toBytes();
+        Assert.assertNotNull(result);
+
+        Input input = new Input(1024);
+        input.setInputStream(new ByteArrayInputStream(result));
+        MyMap<Integer, String, String> myMap1 = (MyMap<Integer, String, String>) kryo.readClassAndObject(input);
+        Assert.assertEquals(myMap.toString(), myMap1.toString());
+    }
+    static class MyEntry<K, V>{
+        K key;
+        V value;
+        public MyEntry(){}
+        public MyEntry(K key, V value){
+            this.key = key;
+            this.value = value;
+        }
+
+        @Override
+        public String toString() {
+            return "MyEntry{" +
+                    "key=" + key +
+                    ", value=" + value +
+                    '}';
+        }
+    }
+    static class MyMap<K, V, C>{
+        MyEntry<K, V> node;
+        C msg;
+        public MyMap(){}
+
+        public MyMap(MyEntry<K, V> node, C msg) {
+            this.node = node;
+            this.msg = msg;
+        }
+
+        @Override
+        public String toString() {
+            return "MyMap{" +
+                    "node=" + node +
+                    ", msg=" + msg +
+                    '}';
+        }
+    }
     static class EmptyStringSupplier implements Supplier<String>, Serializable {
 
         @Override
